@@ -66,14 +66,14 @@ int main(int argc, char *argv[])
         elf32_ehdr = (Elf32_Ehdr *)file_buf;
         print_elf32_elf_header(elf32_ehdr);
         print_elf32_shdr(file_buf, elf32_ehdr->e_shoff, elf32_ehdr->e_shnum, elf32_ehdr->e_shstrndx);
-        print_elf32_sym(file_buf, elf32_ehdr->e_shoff, elf32_ehdr->e_shnum, elf32_ehdr->e_shstrndx);
+        print_elf32_sym(file_buf, elf32_ehdr);
 
     }else if(file_buf[ELF_CLAS_IDX] == ELF64){
         Elf64_Ehdr *elf64_ehdr = NULL;
         elf64_ehdr = (Elf64_Ehdr *)file_buf;
         print_elf64_elf_header(elf64_ehdr);
         print_elf64_shdr(file_buf, elf64_ehdr->e_shoff, elf64_ehdr->e_shnum, elf64_ehdr->e_shstrndx);
-        print_elf64_sym(file_buf, elf64_ehdr->e_shoff, elf64_ehdr->e_shnum, elf64_ehdr->e_shstrndx);
+        print_elf64_sym(file_buf, elf64_ehdr);
     }
 exit:
     if(file_buf){

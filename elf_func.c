@@ -216,6 +216,7 @@ static void print_elf64_symbol_detail(char *addr_base, Elf64_Sym *elf_sym)
 #define PRINT_ELF_SYM_(class) \
     do{ \
         printf("-------------------------------------------------------\n"); \
+        printf("Symbol table:\n"); \
         Elf##class##_Shdr *elf_shdr = NULL; \
         Elf##class##_Shdr *elf_shdr_str_tab = NULL; \
         Elf##class##_Shdr *elf_shdr_sym_tab = NULL; \
@@ -257,13 +258,19 @@ static void print_elf64_symbol_detail(char *addr_base, Elf64_Sym *elf_sym)
         } \
     }while(0)
 
-void print_elf32_sym(char *base_addr, unsigned long sh_off, unsigned long sh_num, unsigned long sh_str_idx)
+void print_elf32_sym(char *base_addr, Elf32_Ehdr *elf32_ehdr)
 {
+    unsigned long sh_off = elf32_ehdr->e_shoff;
+    unsigned long sh_num = elf32_ehdr->e_shnum;
+    unsigned long sh_str_idx = elf32_ehdr->e_shstrndx;
     PRINT_ELF_SYM(SYM_BIT_ARM);
 }
 
-void print_elf64_sym(char *base_addr, unsigned long sh_off, unsigned long sh_num, unsigned long sh_str_idx)
+void print_elf64_sym(char *base_addr, Elf64_Ehdr *elf64_ehdr)
 {
+    unsigned long sh_off = elf64_ehdr->e_shoff;
+    unsigned long sh_num = elf64_ehdr->e_shnum;
+    unsigned long sh_str_idx = elf64_ehdr->e_shstrndx;
     PRINT_ELF_SYM(SYM_BIT_X86);
 }
 
