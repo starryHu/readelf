@@ -216,7 +216,7 @@ static void print_elf64_symbol_detail(char *addr_base, Elf64_Sym *elf_sym)
 #define PRINT_ELF_SYM_(class) \
     do{ \
         printf("-------------------------------------------------------\n"); \
-        printf("Symbol table:\n"); \
+        printf("%s\n", ind_str); \
         Elf##class##_Shdr *elf_shdr = NULL; \
         Elf##class##_Shdr *elf_shdr_str_tab = NULL; \
         Elf##class##_Shdr *elf_shdr_sym_tab = NULL; \
@@ -224,26 +224,26 @@ static void print_elf64_symbol_detail(char *addr_base, Elf64_Sym *elf_sym)
         Elf##class##_Shdr *elf_shdr_sym_str_tab = NULL; \
         int sym_str_tab_idx = 0; \
         int i = 0; \
-        elf_shdr = (Elf##class##_Shdr *)(base_addr + sh_off); \
-        elf_shdr_str_tab = (Elf##class##_Shdr *)(base_addr + sh_off + ((Elf##class##_Ehdr *)base_addr)->e_shentsize*sh_str_idx); \
+        elf_shdr = (Elf##class##_Shdr *)(base_addr + elf_ehdr->e_shoff); \
+        elf_shdr_str_tab = (Elf##class##_Shdr *)(base_addr + elf_ehdr->e_shoff + ((Elf##class##_Ehdr *)base_addr)->e_shentsize*elf_ehdr->e_shstrndx); \
         char *sh_str_base = base_addr + elf_shdr_str_tab->sh_offset; \
-        for(i = 0; i < sh_num; i++){ \
-            if(strncmp(sh_str_base+elf_shdr->sh_name, ".symtab", 7) == 0) \
+        for(i = 0; i < elf_ehdr->e_shnum; i++){ \
+            if(strncmp(sh_str_base+elf_shdr->sh_name, tab_name, 7) == 0) \
                 sym_tab_idx = i; \
-            if(strncmp(sh_str_base+elf_shdr->sh_name, ".strtab", 7) == 0) \
+            if(strncmp(sh_str_base+elf_shdr->sh_name, strtab_name, 7) == 0) \
                 sym_str_tab_idx = i; \
             elf_shdr++; \
         } \
-        if(sym_str_tab_idx >= sh_num) \
+        if(sym_str_tab_idx >= elf_ehdr->e_shnum) \
             printf("There is no strtab in file.\n"); \
-        if(sym_tab_idx >= sh_num) \
+        if(sym_tab_idx >= elf_ehdr->e_shnum) \
             printf("There is no symtab in file.\n"); \
-        elf_shdr_sym_tab  = (Elf##class##_Shdr *)(base_addr + sh_off + ((Elf##class##_Ehdr *)base_addr)->e_shentsize*sym_tab_idx); \
+        elf_shdr_sym_tab  = (Elf##class##_Shdr *)(base_addr + elf_ehdr->e_shoff + ((Elf##class##_Ehdr *)base_addr)->e_shentsize*sym_tab_idx); \
         Elf##class##_Sym *elf_sym = NULL; \
         int sym_num = 0; \
         elf_sym = (Elf##class##_Sym *)(base_addr + elf_shdr_sym_tab->sh_offset);  \
         sym_num = elf_shdr_sym_tab->sh_size / sizeof(Elf##class##_Sym); \
-        elf_shdr_sym_str_tab = (Elf##class##_Shdr *)(base_addr + sh_off + ((Elf##class##_Ehdr *)base_addr)->e_shentsize*sym_str_tab_idx); \
+        elf_shdr_sym_str_tab = (Elf##class##_Shdr *)(base_addr + elf_ehdr->e_shoff + ((Elf##class##_Ehdr *)base_addr)->e_shentsize*sym_str_tab_idx); \
         char *sym_str_base = base_addr + elf_shdr_sym_str_tab->sh_offset; \
         char *fmt = NULL; \
         if(class == SYM_BIT_ARM) \
@@ -258,19 +258,34 @@ static void print_elf64_symbol_detail(char *addr_base, Elf64_Sym *elf_sym)
         } \
     }while(0)
 
-void print_elf32_sym(char *base_addr, Elf32_Ehdr *elf32_ehdr)
+void print_elf32_sym(char *base_addr, Elf32_Ehdr *elf_ehdr)
 {
-    unsigned long sh_off = elf32_ehdr->e_shoff;
-    unsigned long sh_num = elf32_ehdr->e_shnum;
-    unsigned long sh_str_idx = elf32_ehdr->e_shstrndx;
+    char *tab_name = ".symtab";
+    char *strtab_name = ".strtab";
+    char *ind_str = "Symbol table:";
     PRINT_ELF_SYM(SYM_BIT_ARM);
 }
 
-void print_elf64_sym(char *base_addr, Elf64_Ehdr *elf64_ehdr)
+void print_elf64_sym(char *base_addr, Elf64_Ehdr *elf_ehdr)
 {
-    unsigned long sh_off = elf64_ehdr->e_shoff;
-    unsigned long sh_num = elf64_ehdr->e_shnum;
-    unsigned long sh_str_idx = elf64_ehdr->e_shstrndx;
+    char *tab_name = ".symtab";
+    char *strtab_name = ".strtab";
+    char *ind_str = "Symbol table:";
     PRINT_ELF_SYM(SYM_BIT_X86);
 }
 
+void print_elf32_dynsym(char *base_addr, Elf32_Ehdr *elf_ehdr)
+{
+    char *tab_name = ".dynsym";
+    char *strtab_name = ".dynstr";
+    char *ind_str = "Dynamic Symbol table:";
+    PRINT_ELF_SYM(SYM_BIT_ARM);
+}
+
+void print_elf64_dynsym(char *base_addr, Elf64_Ehdr *elf_ehdr)
+{
+    char *tab_name = ".dynsym";
+    char *strtab_name = ".dynstr";
+    char *ind_str = "Dynamic Symbol table:";
+    PRINT_ELF_SYM(SYM_BIT_X86);
+}
