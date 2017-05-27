@@ -20,8 +20,7 @@ static void print_type(int type)
     printf(" %-35s%s\n", "type:", tmp);
 }
 
-#define PRINT_ELF_EHDR_ELE(cls) PRINT_ELF_EHDR_ELE_(cls)
-#define PRINT_ELF_EHDR_ELE_(class) \
+#define PRINT_ELF_EHDR_ELE(class) \
     do{ \
         char *fmt = NULL; \
         print_type((int)elf_ehdr->e_type); \
@@ -52,8 +51,7 @@ void print_elf64_elf_header(Elf64_Ehdr *elf_ehdr)
         PRINT_ELF_EHDR_ELE(SYM_BIT_X86);
 }
 
-#define PRINT_ELF_SHDR_ELE(cls) PRINT_ELF_SHDR_ELE_(cls)
-#define PRINT_ELF_SHDR_ELE_(class) \
+#define PRINT_ELF_SHDR_ELE(class) \
     do{ \
         char *tmp = NULL; \
         printf("%-20s", base_addr + elf_shdr->sh_name); \
